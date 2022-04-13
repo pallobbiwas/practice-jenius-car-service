@@ -1,12 +1,13 @@
 import React, { useRef } from "react";
 import { Button, Form } from "react-bootstrap";
-import { useAuthState, useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { useAuthState, useSignInWithEmailAndPassword, useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import auth from "../../firebase.init";
 import "./Login.css";
 
 const Login = () => {
   const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
+  const [signInWithGoogle] = useSignInWithGoogle(auth);
   const[user] = useAuthState(auth)
   const emailRef = useRef("");
   const passRef = useRef("");
@@ -16,18 +17,21 @@ const Login = () => {
     navigate("/ragister");
   };
 
+  const googleSign = () => {
+    signInWithGoogle()
+  }
+
   const fromSubmit = (e) => {
     e.preventDefault();
     const email = emailRef.current.value;
     const pass = passRef.current.value;
     signInWithEmailAndPassword(email, pass)
   };
-  console.log(user);
   if(user){
     navigate("/");
   }
   return (
-    <div className="container w-50 mx-auto bg-warning rounded-3 p-4">
+    <div className="container w-50 mx-auto bg-warning rounded-3 p-4 my-2">
       <h1 className="text-center text-success">Login</h1>
       <hr />
       <>
@@ -65,6 +69,14 @@ const Login = () => {
           </div>
         </Form>
       </>
+      <div className="horizantal">
+        <div className="line-left"></div>
+        <p>or</p>
+        <div className="line-right"></div>
+      </div>
+      <div className="text-center">
+        <button onClick={googleSign} className="btn btn-info w-75">Logg in with google</button>
+      </div>
     </div>
   );
 };

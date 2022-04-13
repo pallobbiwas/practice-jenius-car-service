@@ -3,3 +3,20 @@
   color: blue;
   cursor: pointer;
 }
+.horizantal {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.horizantal p {
+  margin: 0 10px 2px 10px;
+  color: rgb(13, 14, 13);
+}
+.line-left,
+.line-right {
+  height: 1px;
+  width: 245px;
+  background: black;
+  background: linear-gradient(90deg);
+}

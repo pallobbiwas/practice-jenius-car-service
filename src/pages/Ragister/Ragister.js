@@ -1,17 +1,12 @@
 import React, { useRef } from "react";
 import { Button, Form } from "react-bootstrap";
-import {
-    useCreateUserWithEmailAndPassword,
-    useSendEmailVerification
-} from "react-firebase-hooks/auth";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import auth from "../../firebase.init";
 
 const Ragister = () => {
-  const [createUserWithEmailAndPassword, user] =
+  const [createUserWithEmailAndPassword] =
     useCreateUserWithEmailAndPassword(auth);
-  const [sendEmailVerification, sending, error] =
-    useSendEmailVerification(auth);
 
   const nameRef = useRef("");
   const emailRef = useRef("");
@@ -22,9 +17,6 @@ const Ragister = () => {
   const swtichToLogin = () => {
     navigate("/login");
   };
-  if (user) {
-    navigate("/login");
-  }
   const fromSubmit = (e) => {
     e.preventDefault();
     const name = nameRef.current.value;
@@ -32,13 +24,9 @@ const Ragister = () => {
     const pass = passRef.current.value;
     console.log(name, email, pass);
     createUserWithEmailAndPassword(email, pass, name);
-    sendEmailVerification()
   };
-  if (sending) {
-    return <p>Sending...</p>;
-  }
   return (
-    <div className="container w-50 mx-auto bg-warning rounded-3 p-4">
+    <div className="container w-50 mx-auto bg-warning rounded-3 p-4 my-4">
       <h1 className="text-center text-success">Ragister here</h1>
       <hr />
       <>
@@ -70,9 +58,7 @@ const Ragister = () => {
           <Form.Group className="mb-3" controlId="formBasicCheckbox">
             <Form.Check type="checkbox" label="Check me out" />
           </Form.Group>
-          <div>
-            <p>Error: {error?.message}</p>
-          </div>
+          <div></div>
           <div className="d-flex justify-content-between">
             <Button variant="primary" type="submit">
               Submit
