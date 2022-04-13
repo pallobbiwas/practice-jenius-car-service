@@ -1,43 +1,60 @@
 import React, { useRef } from "react";
 import { Button, Form } from "react-bootstrap";
-import { useAuthState, useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+import {
+    useCreateUserWithEmailAndPassword,
+    useSendEmailVerification
+} from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import auth from "../../firebase.init";
-import "./Login.css";
 
-const Login = () => {
-  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
-  const[user] = useAuthState(auth)
+const Ragister = () => {
+  const [createUserWithEmailAndPassword, user] =
+    useCreateUserWithEmailAndPassword(auth);
+  const [sendEmailVerification, sending, error] =
+    useSendEmailVerification(auth);
+
+  const nameRef = useRef("");
   const emailRef = useRef("");
   const passRef = useRef("");
 
   const navigate = useNavigate();
-  const swtichToRagister = () => {
-    navigate("/ragister");
-  };
 
+  const swtichToLogin = () => {
+    navigate("/login");
+  };
+  if (user) {
+    navigate("/login");
+  }
   const fromSubmit = (e) => {
     e.preventDefault();
+    const name = nameRef.current.value;
     const email = emailRef.current.value;
     const pass = passRef.current.value;
-    signInWithEmailAndPassword(email, pass)
+    console.log(name, email, pass);
+    createUserWithEmailAndPassword(email, pass, name);
+    sendEmailVerification()
   };
-  console.log(user);
-  if(user){
-    navigate("/");
+  if (sending) {
+    return <p>Sending...</p>;
   }
   return (
     <div className="container w-50 mx-auto bg-warning rounded-3 p-4">
-      <h1 className="text-center text-success">Login</h1>
+      <h1 className="text-center text-success">Ragister here</h1>
       <hr />
       <>
         <Form onSubmit={fromSubmit}>
+          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label>Name</Form.Label>
+            <Form.Control ref={nameRef} type="text" placeholder="name" />
+          </Form.Group>
+
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
             <Form.Control
               ref={emailRef}
               type="email"
               placeholder="Enter email"
+              required
             />
           </Form.Group>
 
@@ -47,19 +64,22 @@ const Login = () => {
               ref={passRef}
               type="password"
               placeholder="Password"
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicCheckbox">
             <Form.Check type="checkbox" label="Check me out" />
           </Form.Group>
+          <div>
+            <p>Error: {error?.message}</p>
+          </div>
           <div className="d-flex justify-content-between">
             <Button variant="primary" type="submit">
-              Login
+              Submit
             </Button>
             <p>
-              New to ginus car..?{" "}
-              <span onClick={swtichToRagister} className="link-text">
-                create an account..?
+              <span onClick={swtichToLogin} className="link-text">
+                Allrady have an account..?
               </span>
             </p>
           </div>
@@ -69,4 +89,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Ragister;

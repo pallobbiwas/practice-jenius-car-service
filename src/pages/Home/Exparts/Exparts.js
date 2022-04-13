@@ -18,7 +18,7 @@ const Exparts = () => {
     { id: 6, name: "mr.ekkaa", img: person6 },
   ];
   return (
-    <div className="container-fluid">
+    <div id="expart" className="container-fluid">
       <div className="my-4 text-center">
         <h2>Our experts</h2>
         <hr />
