@@ -1,12 +1,18 @@
 import React, { useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { useNavigate } from "react-router-dom";
+import {
+  useCreateUserWithEmailAndPassword,
+  useUpdateProfile
+} from "react-firebase-hooks/auth";
+import { Link, useNavigate } from "react-router-dom";
 import auth from "../../firebase.init";
 
 const Ragister = () => {
-  const [createUserWithEmailAndPassword] =
-    useCreateUserWithEmailAndPassword(auth);
+  const [updateProfile] = useUpdateProfile(auth);
+  const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(
+    auth,
+    { sendEmailVerification: true }
+  );
 
   const [agree, setAgree] = useState(false);
 
@@ -16,16 +22,16 @@ const Ragister = () => {
 
   const navigate = useNavigate();
 
-  const swtichToLogin = () => {
-    navigate("/login");
-  };
-  const fromSubmit = (e) => {
+  const fromSubmit = async (e) => {
     e.preventDefault();
     const name = nameRef.current.value;
     const email = emailRef.current.value;
     const pass = passRef.current.value;
     console.log(name, email, pass);
-    createUserWithEmailAndPassword(email, pass, name);
+    await createUserWithEmailAndPassword(email, pass, name);
+    await updateProfile({ name });
+    alert("Updated profile");
+    navigate("/login");
   };
   return (
     <div className="container w-50 mx-auto bg-warning rounded-3 p-4 my-4">
@@ -57,8 +63,16 @@ const Ragister = () => {
               required
             />
           </Form.Group>
-          <Form.Group onClick={()=>setAgree(!agree)} className="mb-3" controlId="formBasicCheckbox">
-            <Form.Check className={agree? "text-success" : "text-danger"} type="checkbox" label="accept tarms & condition" />
+          <Form.Group
+            onClick={() => setAgree(!agree)}
+            className="mb-3"
+            controlId="formBasicCheckbox"
+          >
+            <Form.Check
+              className={agree ? "text-success" : "text-danger"}
+              type="checkbox"
+              label="accept tarms & condition"
+            />
           </Form.Group>
           <div></div>
           <div className="d-flex justify-content-between">
@@ -66,9 +80,9 @@ const Ragister = () => {
               Submit
             </Button>
             <p>
-              <span onClick={swtichToLogin} className="link-text">
+              <Link to='/login' className="link-text">
                 Allrady have an account..?
-              </span>
+              </Link>
             </p>
           </div>
         </Form>
