@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,8 @@ import auth from "../../firebase.init";
 const Ragister = () => {
   const [createUserWithEmailAndPassword] =
     useCreateUserWithEmailAndPassword(auth);
+
+  const [agree, setAgree] = useState(false);
 
   const nameRef = useRef("");
   const emailRef = useRef("");
@@ -55,12 +57,12 @@ const Ragister = () => {
               required
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicCheckbox">
-            <Form.Check type="checkbox" label="Check me out" />
+          <Form.Group onClick={()=>setAgree(!agree)} className="mb-3" controlId="formBasicCheckbox">
+            <Form.Check className={agree? "text-success" : "text-danger"} type="checkbox" label="accept tarms & condition" />
           </Form.Group>
           <div></div>
           <div className="d-flex justify-content-between">
-            <Button variant="primary" type="submit">
+            <Button disabled={!agree} variant="primary" type="submit">
               Submit
             </Button>
             <p>
