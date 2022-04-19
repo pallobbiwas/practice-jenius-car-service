@@ -1,37 +1,61 @@
 import React, { useRef } from "react";
 import { Button, Form } from "react-bootstrap";
-import { useAuthState, useSignInWithEmailAndPassword, useSignInWithGoogle } from "react-firebase-hooks/auth";
+import {
+  useAuthState,
+  useSendPasswordResetEmail,
+  useSignInWithEmailAndPassword,
+  useSignInWithGoogle
+} from "react-firebase-hooks/auth";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import auth from "../../firebase.init";
 import "./Login.css";
 
 const Login = () => {
-  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
+  const [signInWithEmailAndPassword, user1, loading, error] =
+    useSignInWithEmailAndPassword(auth);
   const [signInWithGoogle] = useSignInWithGoogle(auth);
-  const[user] = useAuthState(auth)
+  const [user] = useAuthState(auth);
   const emailRef = useRef("");
   const passRef = useRef("");
+  const [sendPasswordResetEmail, sending] = useSendPasswordResetEmail(auth);
 
   const navigate = useNavigate();
+  let erreorElement;
   const swtichToRagister = () => {
     navigate("/ragister");
   };
 
   const googleSign = () => {
-    signInWithGoogle()
-  }
+    signInWithGoogle();
+  };
 
   const fromSubmit = (e) => {
     e.preventDefault();
     const email = emailRef.current.value;
     const pass = passRef.current.value;
-    signInWithEmailAndPassword(email, pass)
+    signInWithEmailAndPassword(email, pass);
   };
-  if(user){
+  if (user) {
     navigate("/");
   }
+  if (error) {
+    erreorElement = (
+      <div>
+        <p className="text-danger">Error: {error?.message}</p>
+      </div>
+    );
+  }
+  const forgetPassword = async () => {
+    const email = emailRef.current.value;
+    await sendPasswordResetEmail(email);
+    alert("Sent email");
+  };
   return (
     <div className="container w-50 mx-auto bg-warning rounded-3 p-4 my-2">
+      <Helmet>
+        <title>login-car genius service</title>
+      </Helmet>
       <h1 className="text-center text-success">Login</h1>
       <hr />
       <>
@@ -51,16 +75,25 @@ const Login = () => {
               placeholder="Password"
             />
           </Form.Group>
+          {erreorElement}
           <div className="d-flex justify-content-between">
-            <Button variant="primary" type="submit">
-              Login
-            </Button>
+            <p>
+              forgetten password..?{" "}
+              <span onClick={forgetPassword} className="link-text">
+                reset your password?
+              </span>
+            </p>
             <p>
               New to ginus car..?{" "}
               <span onClick={swtichToRagister} className="link-text">
                 create an account..?
               </span>
             </p>
+          </div>
+          <div className="text-center mt-4">
+            <Button variant="primary w-50" type="submit">
+              Login
+            </Button>
           </div>
         </Form>
       </>
@@ -70,7 +103,9 @@ const Login = () => {
         <div className="line-right"></div>
       </div>
       <div className="text-center">
-        <button onClick={googleSign} className="btn btn-info w-75">Logg in with google</button>
+        <button onClick={googleSign} className="btn btn-info w-75">
+          Logg in with google
+        </button>
       </div>
     </div>
   );

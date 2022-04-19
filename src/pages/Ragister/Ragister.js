@@ -29,7 +29,7 @@ const Ragister = () => {
     const pass = passRef.current.value;
     console.log(name, email, pass);
     await createUserWithEmailAndPassword(email, pass, name);
-    await updateProfile({ name });
+    await updateProfile({ displayName: name });
     alert("Updated profile");
     navigate("/login");
   };

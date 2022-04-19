@@ -9,6 +9,7 @@ import "./Header.css";
 
 const Header = () => {
   const [user] = useAuthState(auth);
+  console.log(user);
   return (
     <nav>
       <>
@@ -37,7 +38,7 @@ const Header = () => {
                   About
                 </Customlink>
               </Nav>
-              {user ? <p>{user.email}</p> : ""}
+              {user ? <p>{user.displayName}</p> : ""}
               <Nav className="ms-auto my-2 my-lg-0">
                 {user ? (
                   <button onClick={() => signOut(auth)}>Log out</button>
